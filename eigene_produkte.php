@@ -46,6 +46,8 @@ if (isset($_POST['bearbeiten'])) {
                     <th>Kategorie</th>
                     <th>Bild</th>
                     <th>Erstellungsdatum</th>
+                    <th>Interessenten</th>
+                    <th>Aktionen</th>
                 </tr>
                 <?php while ($row = $result->fetch()): ?>
                     <tr>
@@ -54,8 +56,25 @@ if (isset($_POST['bearbeiten'])) {
                         <td><?php echo htmlspecialchars($row['preis']); ?></td>
                         <td><?php echo htmlspecialchars($row['beschreibung']); ?></td>
                         <td><?php echo htmlspecialchars($row['kategorie']); ?></td>
-                        <td><?php echo htmlspecialchars($row['bild']); ?></td>
+                        <td><?php echo "<img style='width: 20%; display: flex; justify-self: center'  src='" . htmlspecialchars($row['bild']) . "'>"; ?></td>
                         <td><?php echo htmlspecialchars($row['erstellungs_datum']); ?></td>
+                        <td><?php 
+                                $stmt_int = "SELECT interessenten.benutzer_id, konto.vorname, konto.nachname, konto.klasse  FROM interessenten INNER JOIN konto ON interessenten.benutzer_id = konto.kid WHERE interessenten.artikel_id = :artikel_id  ";
+                                $result_int = $pdo->prepare($stmt_int);
+                                $result_int->bindParam(':artikel_id', $row['pid']);
+                                $result_int->execute();
+                                $interessenten = $result_int->fetchAll();
+
+                                if (count($interessenten) > 0): ?>
+                                    <select name="interessenten">
+                                        <?php foreach ($interessenten as $i): ?>
+                                            <option value=""><?php echo htmlspecialchars($i['vorname']) .", ". htmlspecialchars($i['nachname']) .", ". htmlspecialchars($i['klasse']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php else: ?>
+                                    <span>Noch keine Interessenten</span>
+                                <?php endif; ?>
+                        </td>
                         <td><button type="submit" name="bearbeiten" value="<?php echo $row['pid']; ?>">Bearbeiten</button></td>
                     </tr>
                 <?php endwhile;?>

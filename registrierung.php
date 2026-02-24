@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
 
         <div class="logo">
-            <img src="ilogo.png" alt="Logo">
+            <img src="logo.png" alt="Logo">
         </div>
 
         <h1>Registrierung</h1>
