@@ -77,10 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($message): ?><p><?= $message ?></p><?php endif; ?>
 
         <form action="" method="post">
-            <label name="email">E-Mail:</label>
+            <label for="email">E-Mail:</label>
             <input type="email" name="email" id="email" required>
 
-            <label name="pass">Password:</label>
+            <label for="pass">Password:</label>
             <input type="password" name="pass" id="pass" required>
 
             <div class="buttons">

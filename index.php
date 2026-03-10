@@ -1,17 +1,22 @@
 <?php
 session_start();
-$message = "";
 
 require_once('db.php');
-$stmt = 'SELECT pid,produkt, preis, beschreibung, kategorie, bild, erstellungs_datum FROM product ORDER BY erstellungs_datum DESC';
+$stmt = 'SELECT product.pid, product.kid_fk,product.produkt, product.preis, product.beschreibung, product.kategorie, product.bild, product.erstellungs_datum, konto.email FROM product INNER JOIN konto ON product.kid_fk = konto.kid ORDER BY product.erstellungs_datum DESC';
 $result = $pdo->query($stmt);
 
 if (isset($_POST['bestellen'])) {
-    $stmt2 = "INSERT INTO interessenten (artikel_id,benutzer_id) VALUES (" . $_POST['bestellen'] . "," . $_SESSION['user_id'] . ")";
+    $stmt2 = "INSERT INTO interessenten (artikel_id,benutzer_id) VALUES (:pid, :kid )";
     $result2 = $pdo->prepare($stmt2);
-    $result2->execute();
+    $result2->execute([
+        'pid' => $_POST['bestellen'],
+        'kid' => $_SESSION['user_id']
+    ]);
+}
 
-    $message = 'Bestellung erfolgreich';
+if (isset($_POST['email'])){
+    $_SESSION['v_email'] = $_POST['email'];
+    header('location: emailsenden.php');
 }
 
 ?>
@@ -29,7 +34,6 @@ if (isset($_POST['bestellen'])) {
 <body>
 
     <form action="" method="post">
-        <?php echo $message; ?>
         <div class="container">
             <table>
                 <tr>
@@ -39,6 +43,8 @@ if (isset($_POST['bestellen'])) {
                     <th>Kategorie</th>
                     <th>Bild</th>
                     <th>Erstellungsdatum</th>
+                    <th>Bestellen</th>
+                    <th>E-Mail</th>
                 </tr>
                 <?php while ($row = $result->fetch()): ?>
                     <tr>
@@ -49,6 +55,7 @@ if (isset($_POST['bestellen'])) {
                         <td><?php echo "<img style='width: 20%; display: flex; justify-self: center'  src='" . htmlspecialchars($row['bild']) . "'>"; ?></td>
                         <td><?php echo htmlspecialchars($row['erstellungs_datum']); ?></td>
                         <td><button type="submit" name="bestellen" value="<?php echo $row['pid'];?>">Bestellen</button></td>
+                        <td><button type="submit" name="email" value = "<?php echo $row['email'];?>">E-Mail senden</button></td>
                     </tr>
                 <?php endwhile; ?>
             </table>

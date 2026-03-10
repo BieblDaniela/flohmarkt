@@ -23,6 +23,19 @@ if (isset($_POST['bearbeiten'])) {
     die();
 }
 
+if (isset($_POST['verkaufen'])){
+    $pid = $_POST['verkaufen'];
+    $interessent = 'interessent_' . $pid;
+    $kaeufer = $_POST["$interessent"];
+
+    $sql = "UPDATE product SET gekauft_von = :gekauft_von WHERE pid = :pid";
+    $stmt1 = $pdo->prepare($sql);
+    $stmt1->execute([
+        'gekauft_von' => $kaeufer,
+        'pid' => $pid
+    ]);
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -66,15 +79,16 @@ if (isset($_POST['bearbeiten'])) {
                                 $interessenten = $result_int->fetchAll();
 
                                 if (count($interessenten) > 0): ?>
-                                    <select name="interessenten">
+                                    <select name="interessent_<?php echo $row['pid']; ?>">
                                         <?php foreach ($interessenten as $i): ?>
-                                            <option value=""><?php echo htmlspecialchars($i['vorname']) .", ". htmlspecialchars($i['nachname']) .", ". htmlspecialchars($i['klasse']); ?></option>
+                                            <option value="<?php echo htmlspecialchars($i['benutzer_id']); ?>"><?php echo htmlspecialchars($i['vorname']) .", ". htmlspecialchars($i['nachname']) ." ". htmlspecialchars($i['klasse']).". Klasse "; ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 <?php else: ?>
                                     <span>Noch keine Interessenten</span>
                                 <?php endif; ?>
                         </td>
+                        <td><button type="submit" name="verkaufen" value="<?php echo $row['pid']; ?>">Verkaufen</button></td>
                         <td><button type="submit" name="bearbeiten" value="<?php echo $row['pid']; ?>">Bearbeiten</button></td>
                     </tr>
                 <?php endwhile;?>

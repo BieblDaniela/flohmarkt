@@ -1,18 +1,18 @@
 <?php
 session_start();
-$message ="";
+$message = "";
 $targetDir = "uploads/";
 
-if(!isset($_SESSION['user_id'])){
+if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
 }
 
 if (isset($_POST['zurueck'])) {
-    header ('Location: index.php');
+    header('Location: index.php');
     die();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])) {
     $error = $_FILES['bild']['error'];
     $produkt = trim($_POST['produkt']);
     $preis = trim($_POST['preis']);
@@ -48,23 +48,28 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
             echo "Fehler beim Verschieben der Datei.";
         }
 
-        require_once('db.php');
-        try {
-            $sql = "INSERT INTO product(produkt, preis, beschreibung, kategorie, bild, kid_fk) VALUES (:produkt, :preis,:beschreibung,:kategorie,:bild,:kid_fk)";
-            $stmt = $pdo->prepare($sql);
+        //Aufruf der Funktion zur Prüfung, ob verbotene Wort verwendet wurden
+        require_once('funktionen.php');
+        if (enthaeltVerboteneWoerter($produkt) || enthaeltVerboteneWoerter($beschreibung)) {
+            die("Fehler: Dein Inserat enthält Begriffe, die auf unserem Flohmarkt nicht erlaubt sind. \n Inserat wird nicht hochgeladen!");
+        } else {
+            require_once('db.php');
+            try {
+                $sql = "INSERT INTO product(produkt, preis, beschreibung, kategorie, bild, kid_fk) VALUES (:produkt, :preis,:beschreibung,:kategorie,:bild,:kid_fk)";
+                $stmt = $pdo->prepare($sql);
 
-            $stmt->execute([
-                'produkt' => $produkt,
-                'preis' => $preis,
-                'beschreibung' => $beschreibung,
-                'kategorie' => $kategorie,
-                'bild' => $destination,
-                'kid_fk' => $_SESSION['user_id']
-            ]);
-            
-        } catch (PDOException $e) {
-            $e->getMessage();
-            echo "Fehler beim Speichern der Daten in die Datenbank!";
+                $stmt->execute([
+                    'produkt' => $produkt,
+                    'preis' => $preis,
+                    'beschreibung' => $beschreibung,
+                    'kategorie' => $kategorie,
+                    'bild' => $destination,
+                    'kid_fk' => $_SESSION['user_id']
+                ]);
+            } catch (PDOException $e) {
+                $e->getMessage();
+                echo "Fehler beim Speichern der Daten in die Datenbank!";
+            }
         }
     }
 }
@@ -73,12 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produkt anlegen</title>
     <link rel="stylesheet" href="style.css?v=<?php echo filemtime('style.css'); ?>">
 </head>
+
 <body class="produkt-anlegen">
     <div class="container">
 
@@ -86,16 +93,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
         <?php if ($message): ?><p><?= $message ?></p><?php endif; ?>
 
         <form action="" method="post" enctype="multipart/form-data">
-            <label name="produkt">Produktname:</label>
+            <label for="produkt">Produktname:</label>
             <input type="text" name="produkt" id="produkt">
 
             <div class="form-row">
                 <div>
-                    <label name="preis">Preis:</label>
+                    <label for="preis">Preis:</label>
                     <input type="number" name="preis" id="preis">
                 </div>
                 <div>
-                    <label name="kategorie">Kategorie:</label>
+                    <label for="kategorie">Kategorie:</label>
                     <select name="kategorie">
                         <option name="kategorie" id="school" value="school" selected>Schulartikel</option>
                         <option name="kategorie" id="electronics" value="electronics">Elektonik</option>
@@ -105,10 +112,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
                 </div>
             </div>
 
-            <label name="bild">Produktbild:</label>
-            <input type="file" name="bild" id="bild"> 
+            <label for="bild">Produktbild:</label>
+            <input type="file" name="bild" id="bild">
 
-            <label name="beschreibung">Beschreibung:</label>
+            <label for="beschreibung">Beschreibung:</label>
             <textarea name="beschreibung" id="beschreibung"></textarea>
 
             <div class="button">
@@ -119,4 +126,5 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_FILES['bild'])){
         </form>
     </div>
 </body>
+
 </html>

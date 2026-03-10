@@ -110,16 +110,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <?php if ($message): ?><p><?= $message ?></p><?php endif; ?>
 
         <form action="" method="post" enctype="multipart/form-data">
-            <label name="produkt">Produktname:</label>
+            <label for="produkt">Produktname:</label>
             <input type="text" name="produkt" id="produkt" value="<?php echo htmlspecialchars($produkt ?? '') ?>">
 
             <div class="form-row">
                 <div>
-                    <label name="preis">Preis:</label>
+                    <label for="preis">Preis:</label>
                     <input type="number" name="preis" id="preis" value="<?php echo htmlspecialchars($preis ?? '') ?>">
                 </div>
                 <div>
-                    <label name="kategorie">Kategorie:</label>
+                    <label for="kategorie">Kategorie:</label>
                     <select name="kategorie">
                         <option name="kategorie" id="school" value="school" <?php if ($kategorie == 'school') echo 'selected'; ?>>Schulartikel</option>
                         <option name="kategorie" id="electronics" value="electronics" <?php if ($kategorie == 'electronics') echo 'selected'; ?>>Elektonik</option>
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <label for="bild">Neues Bild hochladen (optional):</label>
             <input type="file" name="bild" id="bild">
 
-            <label name="beschreibung">Beschreibung:</label>
+            <label for="beschreibung">Beschreibung:</label>
             <textarea name="beschreibung" id="beschreibung"><?php echo htmlspecialchars($beschreibung ?? '') ?></textarea>
 
             <div class="button">

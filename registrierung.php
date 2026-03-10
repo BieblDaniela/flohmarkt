@@ -65,13 +65,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php if ($message): ?><p><?= $message ?></p><?php endif; ?>
 
         <form action="" method="post">
-            <label name="vn">Vorname:</label>
+            <label for="vn">Vorname:</label>
             <input type="text" name="vn" id="vn" required>
 
-            <label name="nn">Nachname:</label>
+            <label for="nn">Nachname:</label>
             <input type="text" name="nn" id="nn" required>
 
-            <label name="kl">Klasse:</label>
+            <label for="kl">Klasse:</label>
             <select name="kl">
                 <option name="kl" id="1" value="1" selected>1.Klasse</option>
                 <option name="kl" id="2" value="2">2.Klasse</option>
@@ -80,13 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option name="kl" id="5" value="5">5.Klasse</option>
             </select>
 
-            <label name="email">E-Mail:</label>
+            <label for="email">E-Mail:</label>
             <input type="email" name="email" id="email" required>
 
-            <label name="pass">Password:</label>
+            <label for="pass">Password:</label>
             <input type="password" name="pass" id="pass" required>
 
-            <label name="best">Password bestätigen:</label>
+            <label for="best">Password bestätigen:</label>
             <input type="password" name="best" id="best" required>
 
             <div class="buttons">
